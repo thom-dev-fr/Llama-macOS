@@ -1,4 +1,5 @@
 import AuthenticationServices
+import LlamaCore
 import SwiftUI
 
 /// Settings window controller -- manages the settings window lifecycle.

@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LlamaCore
 import os.log
 
 /// A Safari Web App ("Add to Dock", Safari 17+) installed for the WebUI.

@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LlamaCore
 
 /// Interactive menu item representing a single installed/downloading model.
 /// Visual states:
@@ -116,7 +117,7 @@ final class ModelItemView: ItemView, NSGestureRecognizerDelegate {
     super.init(frame: .zero)
 
     iconView.image =
-      model.brandLogoAsset.flatMap { NSImage(named: $0) }
+      model.brandLogoAsset.flatMap { ModelLogos.bundle.image(forResource: $0) }
       ?? NSImage(systemSymbolName: "cube.fill", accessibilityDescription: "Model")
 
     Theme.configure(cancelImageView, symbol: "xmark", tooltip: "Cancel download")

@@ -1,8 +1,9 @@
 import AppKit
+import LlamaCore
+import os.log
 import Sentry
 import Sparkle
 import SwiftUI
-import os.log
 
 @main
 struct LlamaApp: App {

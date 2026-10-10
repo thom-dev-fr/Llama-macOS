@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 import OSLog
 
 /// Identifies *which* network the Mac is currently attached to.

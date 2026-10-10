@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 
 /// Paused download state. Carries the `Model` so deeplink-sideload
 /// placeholders can still render a paused row after their active download

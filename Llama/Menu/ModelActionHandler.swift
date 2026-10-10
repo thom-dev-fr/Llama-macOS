@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LlamaCore
 
 /// Handles user actions on model items (start, stop, download, delete, etc.).
 /// Decouples business logic from the view.

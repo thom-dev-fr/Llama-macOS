@@ -1,4 +1,5 @@
 import AppKit
+import LlamaCore
 import ObjectiveC
 
 extension NSView {

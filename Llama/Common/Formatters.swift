@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LlamaCore
 
 enum Format {
   // MARK: - Byte Formatting (decimal: 1 GB = 1e9 bytes)

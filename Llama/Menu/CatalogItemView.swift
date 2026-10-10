@@ -1,4 +1,5 @@
 import AppKit
+import LlamaCore
 
 /// A single suggestion row in the Discover section. Lighter than `ModelItemView`:
 /// a catalog suggestion isn't a resolved `Model` yet (no download URL, no
@@ -37,7 +38,7 @@ final class CatalogItemView: ItemView {
     super.init(frame: .zero)
 
     iconView.image =
-      suggestion.brandLogoAsset.flatMap { NSImage(named: $0) }
+      suggestion.brandLogoAsset.flatMap { ModelLogos.bundle.image(forResource: $0) }
       ?? NSImage(systemSymbolName: "cube.fill", accessibilityDescription: "Model")
     iconView.inactiveTintColor = Theme.Colors.modelIconTint
 

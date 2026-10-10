@@ -1,6 +1,7 @@
 import AuthenticationServices
 import CryptoKit
 import Foundation
+import LlamaCore
 import SwiftUI
 import os
 

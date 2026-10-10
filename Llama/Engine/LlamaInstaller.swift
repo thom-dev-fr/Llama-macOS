@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import LlamaCore
 import os.log
 
 /// Installs and updates the app-managed `llama` CLI by fetching prebuilt binaries

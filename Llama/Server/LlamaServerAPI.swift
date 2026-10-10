@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 import os.log
 
 /// Per-model load state as reported by llama-server's `/models` endpoint.

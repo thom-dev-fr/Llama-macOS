@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		154EE9712EA64E200083FDEE /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 154EE9702EA64E200083FDEE /* Sentry */; };
 		156891D32E268C5F00F71BD4 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 156891D22E268C5F00F71BD4 /* Sparkle */; };
+		AC0E11A0C0DE000000000004 /* LlamaCore in Frameworks */ = {isa = PBXBuildFile; productRef = AC0E11A0C0DE000000000002 /* LlamaCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 			files = (
 				156891D32E268C5F00F71BD4 /* Sparkle in Frameworks */,
 				154EE9712EA64E200083FDEE /* Sentry in Frameworks */,
+				AC0E11A0C0DE000000000004 /* LlamaCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				156891D22E268C5F00F71BD4 /* Sparkle */,
 				154EE9702EA64E200083FDEE /* Sentry */,
+				AC0E11A0C0DE000000000002 /* LlamaCore */,
 			);
 			productName = Llama;
 			productReference = 1568919C2E2685F700F71BD4 /* Llama.app */;
@@ -119,6 +122,7 @@
 			packageReferences = (
 				156891D12E268C5F00F71BD4 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				154EE96F2EA64E200083FDEE /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				AC0E11A0C0DE000000000001 /* XCLocalSwiftPackageReference "LlamaCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1568919D2E2685F700F71BD4 /* Products */;
@@ -360,6 +364,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		AC0E11A0C0DE000000000001 /* XCLocalSwiftPackageReference "LlamaCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/LlamaCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		154EE96F2EA64E200083FDEE /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -389,6 +400,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 156891D12E268C5F00F71BD4 /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
+		};
+		AC0E11A0C0DE000000000002 /* LlamaCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC0E11A0C0DE000000000001 /* XCLocalSwiftPackageReference "LlamaCore" */;
+			productName = LlamaCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
