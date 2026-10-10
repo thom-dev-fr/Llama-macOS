@@ -300,6 +300,7 @@ final class ModelLibrary {
     } catch {
       self.error = error.localizedDescription
     }
+    DecisionDraft.remove(for: model.id)
     refresh()
   }
 

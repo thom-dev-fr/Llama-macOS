@@ -6,7 +6,7 @@ A standalone iPhone and iPad app: models run on the device, with no Mac involved
 - the llama.cpp server running in-process, with no child process
 - the llama.cpp WebUI in a SwiftUI `WebView`, including switching models from its picker
 
-A native screen handles models and the engine; conversations happen in the WebUI.
+A native screen handles models and the engine; conversations happen in the WebUI. Decision models, which answer typed questions instead of chatting, have a native Try screen instead. As on the Mac, they run at a fixed 4K context, which is the longest input they take, with batches sized to it for the types llama.cpp scores in one pass.
 
 ## Build and run
 
@@ -41,7 +41,7 @@ xcodebuild -exportArchive -archivePath build/Llama-iOS.xcarchive -exportOptionsP
 | Path | Role |
 | --- | --- |
 | `App/LlamaMobileApp.swift` | Entry point. Connects the model library to the engine, runs the engine while the app is in the foreground, and hands background download events to the session. |
-| `App/LibraryView.swift` | Native screen: installed models, recommendations and a link to the full llama.app catalog, adding a Hugging Face repo, install links, downloads, a Chat button per model, the loaded model, and the WebUI sheet. |
+| `App/LibraryView.swift` | Native screen: installed models, recommendations and a link to the full llama.app catalog, adding a Hugging Face repo, install links, downloads, a Chat button per model (Try for a decision model), the loaded model, and the WebUI sheet. |
 | `App/ModelLibrary.swift` | Models in the app's Hugging Face cache (`Application Support/huggingface/hub`, excluded from backups), and installing through the shared resolver. |
 | `App/DownloadSession.swift` | The background download session: each file is checked against Hugging Face's SHA-256 and placed in the cache layout, even when iOS relaunches the app in the background to deliver it. Stopped transfers keep their resume data. A model that finishes or fails is announced with a notification. |
 | `App/SettingsView.swift` | Settings: Hugging Face token, cellular data, storage, versions, and the engine log and `models.ini` for diagnosis. |
@@ -50,7 +50,8 @@ xcodebuild -exportArchive -archivePath build/Llama-iOS.xcarchive -exportOptionsP
 | `App/EngineController.swift` | Runs the embedded server in the foreground, without a model until one is chosen, and mirrors its state. The only Swift code that calls the C API. |
 | `Engine/MobileServer.{h,cpp}` | The embedded server and its C API. |
 | `Engine/CMakeLists.txt` | Builds llama.cpp and the server as static libraries. |
-| `UITests/` | End-to-end tests: chat through the WebUI and model switching through the server API. |
+| `App/Decisions/` | The Try screen of a decision model: a state (text, and images when the model has a projector), typed questions (choice, score, yes/no) and their answers, through the engine's `/v1/systemone`. `SystemOne.swift` holds the request, its validation and the answers; `DecisionDraft.swift` keeps the last request per model. |
+| `UITests/` | End-to-end tests: chat through the WebUI, model switching through the server API, and a decision model answering on its Try screen. |
 | `Signing.xcconfig` | Signing settings shared by the iOS targets. |
 | `../Packages/LlamaCore/` | Code shared with the macOS app: model ids, memory fit and context tiers for a given memory budget, Hugging Face resolution, cache scan and download plan, `llama://` links, the remote catalog. Linked but not used yet. Tests: `swift test` in that folder. |
 | `../scripts/build-ios-engine.sh` | Pins llama.cpp and builds `libLlamaMobile.a` for the current SDK. Xcode runs it before compiling. |
@@ -61,11 +62,12 @@ xcodebuild -exportArchive -archivePath build/Llama-iOS.xcarchive -exportOptionsP
 LibraryView ──► EngineController ──► MobileServer C API
                                           │
 WebView (WebUI) ────HTTP 127.0.0.1:18080──► MobileServer router ──► one server_context
+DecisionView ─────────────┘
 ```
 
 On macOS, `llama serve` runs in router mode: the router starts one `llama-server` process per model and forwards requests to it. The WebUI's model picker relies on that mode. iOS apps cannot start processes, and the llama.cpp router refuses to run without them.
 
-`MobileServer.cpp` therefore serves the router API itself (`/props`, `/models`, `/models/load`, `/models/unload`, `/models/sse`), from a single process. It hands chat and `/v1/systemone` requests to the unmodified llama.cpp handlers of the model they name, loading that model first if needed. A `/v1/systemone` response carries a `Server-Timing` header (`load;dur=…, compute;dur=…`, in milliseconds), which upstream doesn't send. Only one model is in memory at a time: a switch waits for requests in progress, frees the current model, then loads the next one. The comment at the top of the file explains the design and its locking.
+`MobileServer.cpp` therefore serves the router API itself (`/props`, `/models`, `/models/load`, `/models/unload`, `/models/sse`), from a single process. It hands chat and `/v1/systemone` requests to the unmodified llama.cpp handlers of the model they name, loading that model first if needed. A `/v1/systemone` response carries a `Server-Timing` header (`load;dur=…, compute;dur=…`, in milliseconds), which upstream doesn't send: the Try screen shows it with the prompt throughput. Only one model is in memory at a time: a switch waits for requests in progress, frees the current model, then loads the next one. The comment at the top of the file explains the design and its locking.
 
 The models come from `models.ini`, generated like the Mac's by `ModelPreset` in LlamaCore: one section per installed model with its path, context size, image projector, draft head and tags. The engine reads it with llama.cpp's own preset parser and applies each section to its model's parameters, as `llama serve --models-preset` does for each child server. Memory is measured in-process with the figures `llama fit-params -fitp on` prints on the Mac, at 4K and 128K, and fitted into the same `MemProfile`; that is what limits the context sizes offered.
 
