@@ -1,0 +1,7 @@
+// Shared signing settings for the iOS targets.
+// To run on a device, create iOS/Signing.local.xcconfig (ignored by git) with your own team
+// and a bundle ID prefix that team can register, for example:
+//   DEVELOPMENT_TEAM = ABCDE12345
+//   BUNDLE_ID_PREFIX = com.example
+BUNDLE_ID_PREFIX = app.llama
+#include? "Signing.local.xcconfig"

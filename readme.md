@@ -107,3 +107,7 @@ defaults write app.llama.Llama extraServerArgs -string "--api-key secret"
 # remove (default)
 defaults delete app.llama.Llama extraServerArgs
 ```
+
+## iOS (Experimental)
+
+An experimental standalone iPhone and iPad app lives in [`iOS/`](iOS/README.md).
