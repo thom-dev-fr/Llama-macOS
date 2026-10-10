@@ -6,7 +6,7 @@ A standalone iPhone and iPad app: models run on the device, with no Mac involved
 - the llama.cpp server running in-process, with no child process
 - the llama.cpp WebUI in a SwiftUI `WebView`, including switching models from its picker
 
-A native screen handles the engine; conversations happen in the WebUI.
+A native screen handles models and the engine; conversations happen in the WebUI.
 
 ## Build and run
 
@@ -23,7 +23,7 @@ Requirements: Xcode with the iOS 26 SDK or later, and CMake (`brew install cmake
 
 2. Build and run the `Llama-iOS` scheme. The first build clones llama.cpp into `build/llama.cpp` and compiles it, which takes a few minutes. Later builds are incremental.
 
-3. In the app, open the WebUI from the engine bar: the engine already runs. There are no models to choose from yet.
+3. In the app, get a recommended model or add one from Hugging Face, then tap Chat on it: the engine already runs, and the WebUI opens on that model. `llama://install?repo=org/repo[&quant=Q4_K_M]` links, like the ones on llama.app, open the app on the same confirmation. On the simulator: `xcrun simctl openurl booted "llama://install?repo=unsloth/SmolLM2-135M-Instruct-GGUF&quant=Q8_0"`.
 
 ## TestFlight
 
@@ -40,8 +40,13 @@ xcodebuild -exportArchive -archivePath build/Llama-iOS.xcarchive -exportOptionsP
 
 | Path | Role |
 | --- | --- |
-| `App/LlamaMobileApp.swift` | Entry point. Runs the engine while the app is in the foreground. |
-| `App/LibraryView.swift` | Native screen: the engine's state, the loaded model, and the WebUI sheet. |
+| `App/LlamaMobileApp.swift` | Entry point. Connects the model library to the engine, runs the engine while the app is in the foreground, and hands background download events to the session. |
+| `App/LibraryView.swift` | Native screen: installed models, recommendations and a link to the full llama.app catalog, adding a Hugging Face repo, install links, downloads, a Chat button per model, the loaded model, and the WebUI sheet. |
+| `App/ModelLibrary.swift` | Models in the app's Hugging Face cache (`Application Support/huggingface/hub`, excluded from backups), and installing through the shared resolver. |
+| `App/DownloadSession.swift` | The background download session: each file is checked against Hugging Face's SHA-256 and placed in the cache layout, even when iOS relaunches the app in the background to deliver it. Stopped transfers keep their resume data. A model that finishes or fails is announced with a notification. |
+| `App/SettingsView.swift` | Settings: Hugging Face token, cellular data, storage, versions, and the engine log and `models.ini` for diagnosis. |
+| `App/Keychain.swift` | The Hugging Face token, kept in this device's Keychain only. |
+| `App/DeviceMemory.swift` | The memory budget models are checked against: the process limit iOS enforces, less a margin. |
 | `App/EngineController.swift` | Runs the embedded server in the foreground, without a model until one is chosen, and mirrors its state. The only Swift code that calls the C API. |
 | `Engine/MobileServer.{h,cpp}` | The embedded server and its C API. |
 | `Engine/CMakeLists.txt` | Builds llama.cpp and the server as static libraries. |
@@ -61,6 +66,8 @@ On macOS, `llama serve` runs in router mode: the router starts one `llama-server
 
 `MobileServer.cpp` therefore serves the router API itself (`/props`, `/models`, `/models/load`, `/models/unload`, `/models/sse`), from a single process. It hands chat and `/v1/systemone` requests to the unmodified llama.cpp handlers of the model they name, loading that model first if needed. A `/v1/systemone` response carries a `Server-Timing` header (`load;dur=…, compute;dur=…`, in milliseconds), which upstream doesn't send. Only one model is in memory at a time: a switch waits for requests in progress, frees the current model, then loads the next one. The comment at the top of the file explains the design and its locking.
 
+The models come from `models.ini`, generated like the Mac's by `ModelPreset` in LlamaCore: one section per installed model with its path, context size, image projector, draft head and tags. The engine reads it with llama.cpp's own preset parser and applies each section to its model's parameters, as `llama serve --models-preset` does for each child server. Memory is measured in-process with the figures `llama fit-params -fitp on` prints on the Mac, at 4K and 128K, and fitted into the same `MemProfile`; that is what limits the context sizes offered.
+
 ## Updating llama.cpp
 
 The iOS engine builds the same llama.cpp release the macOS app downloads (`LlamaBinaries.targetVersion`).
@@ -71,6 +78,9 @@ The iOS engine builds the same llama.cpp release the macOS app downloads (`Llama
 ## Known limitations
 
 - Fixed port 18080, which keeps the WebUI origin and therefore its chat history stable. Another app on the device could use that port too.
+- Settings other than the context size can't be changed on the device: no equivalent of the Mac's `models.user.ini` yet.
 - The engine stops when the app goes to the background, which frees the model and ends a generation in progress; it starts again, without a model, when the app comes back.
+- Downloads use Wi-Fi only unless cellular data is allowed; that choice applies to downloads started afterwards.
+- A model above the memory estimate gets a warning, not a refusal, and runs at 4K.
 - WebUI tools, MCP and the CORS proxy are disabled.
 - Decision models stay in the WebUI's picker, as on the Mac: the WebUI doesn't tell them apart yet, and chatting with one fails. `/models` reports their `decision` tag and `decisions` output modality.

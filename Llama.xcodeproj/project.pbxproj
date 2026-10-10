@@ -7,11 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F78A176B9AAF5C2F45B5C48 /* ModelLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EBF859AB0DA07411CC7E7F9 /* ModelLibrary.swift */; };
 		154EE9712EA64E200083FDEE /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 154EE9702EA64E200083FDEE /* Sentry */; };
 		156891D32E268C5F00F71BD4 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 156891D22E268C5F00F71BD4 /* Sparkle */; };
+		2849DAD780CD5CE2ED3AC6D2 /* DeviceMemory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 462C8C24D07FE2CF67D87661 /* DeviceMemory.swift */; };
 		5BC383E6A72FB18BEF6E44AB /* LlamaMobileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 139BDF81F4388A7122AEA285 /* LlamaMobileApp.swift */; };
+		6BF6E01ED73AF797A8B79A2C /* DownloadSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B34F9A76F5210C56A2EEE4B /* DownloadSession.swift */; };
 		AC0E11A0C0DE000000000004 /* LlamaCore in Frameworks */ = {isa = PBXBuildFile; productRef = AC0E11A0C0DE000000000002 /* LlamaCore */; };
 		AC0E11A0C0DE000000000005 /* LlamaCore in Frameworks */ = {isa = PBXBuildFile; productRef = AC0E11A0C0DE000000000003 /* LlamaCore */; };
+		AC0E11A0C0DE000000000012 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000011 /* Keychain.swift */; };
+		AC0E11A0C0DE000000000014 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000013 /* SettingsView.swift */; };
 		AC0E11A0C0DE000000000016 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000015 /* AppIcon.icon */; };
 		AC0E11A0C0DE000000000042 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000041 /* ChatView.swift */; };
 		E1A4C2F07B3D5A9C6E8F0B11 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A4C2F07B3D5A9C6E8F0B12 /* LibraryView.swift */; };
@@ -25,8 +30,13 @@
 		139BDF81F4388A7122AEA285 /* LlamaMobileApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LlamaMobileApp.swift; sourceTree = "<group>"; };
 		1568919C2E2685F700F71BD4 /* Llama.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Llama.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		243AA3DF5069EB9F3E0CB2CF /* Llama-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Llama-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3EBF859AB0DA07411CC7E7F9 /* ModelLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelLibrary.swift; sourceTree = "<group>"; };
+		462C8C24D07FE2CF67D87661 /* DeviceMemory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceMemory.swift; sourceTree = "<group>"; };
 		5C1A9E2B7D4F3A6B8E0C1D27 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		864F71B12BBC630D7001DDEB /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9B34F9A76F5210C56A2EEE4B /* DownloadSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DownloadSession.swift; sourceTree = "<group>"; };
+		AC0E11A0C0DE000000000011 /* Keychain.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		AC0E11A0C0DE000000000013 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AC0E11A0C0DE000000000015 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		AC0E11A0C0DE000000000041 /* ChatView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		E1A4C2F07B3D5A9C6E8F0B12 /* LibraryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
@@ -108,9 +118,14 @@
 			isa = PBXGroup;
 			children = (
 				139BDF81F4388A7122AEA285 /* LlamaMobileApp.swift */,
+				9B34F9A76F5210C56A2EEE4B /* DownloadSession.swift */,
 				E1A4C2F07B3D5A9C6E8F0B22 /* EngineController.swift */,
 				E1A4C2F07B3D5A9C6E8F0B12 /* LibraryView.swift */,
+				462C8C24D07FE2CF67D87661 /* DeviceMemory.swift */,
 				AC0E11A0C0DE000000000041 /* ChatView.swift */,
+				AC0E11A0C0DE000000000013 /* SettingsView.swift */,
+				AC0E11A0C0DE000000000011 /* Keychain.swift */,
+				3EBF859AB0DA07411CC7E7F9 /* ModelLibrary.swift */,
 				864F71B12BBC630D7001DDEB /* Info.plist */,
 				AC0E11A0C0DE000000000015 /* AppIcon.icon */,
 			);
@@ -269,9 +284,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC383E6A72FB18BEF6E44AB /* LlamaMobileApp.swift in Sources */,
+				6BF6E01ED73AF797A8B79A2C /* DownloadSession.swift in Sources */,
 				E1A4C2F07B3D5A9C6E8F0B21 /* EngineController.swift in Sources */,
 				E1A4C2F07B3D5A9C6E8F0B11 /* LibraryView.swift in Sources */,
+				2849DAD780CD5CE2ED3AC6D2 /* DeviceMemory.swift in Sources */,
 				AC0E11A0C0DE000000000042 /* ChatView.swift in Sources */,
+				AC0E11A0C0DE000000000014 /* SettingsView.swift in Sources */,
+				AC0E11A0C0DE000000000012 /* Keychain.swift in Sources */,
+				0F78A176B9AAF5C2F45B5C48 /* ModelLibrary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
