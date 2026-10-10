@@ -8,11 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		0F78A176B9AAF5C2F45B5C48 /* ModelLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EBF859AB0DA07411CC7E7F9 /* ModelLibrary.swift */; };
+		1469FA9F743780C01221640B /* AnswerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56A39BDC2E89130BE080B35 /* AnswerView.swift */; };
 		154EE9712EA64E200083FDEE /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 154EE9702EA64E200083FDEE /* Sentry */; };
 		156891D32E268C5F00F71BD4 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 156891D22E268C5F00F71BD4 /* Sparkle */; };
+		2428BC4DFB42F2B0875E07DC /* QuestionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066A67AEADD13BE150005434 /* QuestionEditor.swift */; };
 		2849DAD780CD5CE2ED3AC6D2 /* DeviceMemory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 462C8C24D07FE2CF67D87661 /* DeviceMemory.swift */; };
 		5BC383E6A72FB18BEF6E44AB /* LlamaMobileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 139BDF81F4388A7122AEA285 /* LlamaMobileApp.swift */; };
+		67D24379401910F2B77162DF /* DecisionDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6F2342DFF5F1E7A10A4F743 /* DecisionDraft.swift */; };
 		6BF6E01ED73AF797A8B79A2C /* DownloadSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B34F9A76F5210C56A2EEE4B /* DownloadSession.swift */; };
+		85D77E49E3348DA5015BF392 /* DecisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72F94454FDE8219EE62D5B3 /* DecisionView.swift */; };
+		9BEB1BF41B0811D8F09D9A1C /* DecisionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634DC5AA7C3595EFE24A61EE /* DecisionClient.swift */; };
 		AC0E11A0C0DE000000000004 /* LlamaCore in Frameworks */ = {isa = PBXBuildFile; productRef = AC0E11A0C0DE000000000002 /* LlamaCore */; };
 		AC0E11A0C0DE000000000005 /* LlamaCore in Frameworks */ = {isa = PBXBuildFile; productRef = AC0E11A0C0DE000000000003 /* LlamaCore */; };
 		AC0E11A0C0DE000000000012 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000011 /* Keychain.swift */; };
@@ -21,6 +26,7 @@
 		AC0E11A0C0DE000000000032 /* FileInputPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000031 /* FileInputPresenter.swift */; };
 		AC0E11A0C0DE000000000042 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000041 /* ChatView.swift */; };
 		C29470DD1AB709C9F2FF060B /* LlamaMobileUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F01A16695B8517B36688D97 /* LlamaMobileUITests.swift */; };
+		CF738A91601F8F7CD15B55C2 /* SystemOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5724419CE28F73EA7E81BA70 /* SystemOne.swift */; };
 		E1A4C2F07B3D5A9C6E8F0B11 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A4C2F07B3D5A9C6E8F0B12 /* LibraryView.swift */; };
 		E1A4C2F07B3D5A9C6E8F0B21 /* EngineController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A4C2F07B3D5A9C6E8F0B22 /* EngineController.swift */; };
 /* End PBXBuildFile section */
@@ -37,6 +43,7 @@
 
 /* Begin PBXFileReference section */
 		03C34E99A6E89EB1DFAF9330 /* CMakeLists.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		066A67AEADD13BE150005434 /* QuestionEditor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QuestionEditor.swift; sourceTree = "<group>"; };
 		0EC9F9D68ADC9C7B2FD63059 /* MobileServer.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = MobileServer.cpp; sourceTree = "<group>"; };
 		11EF91E10E7A7060712B8EBB /* MobileServer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MobileServer.h; sourceTree = "<group>"; };
 		139BDF81F4388A7122AEA285 /* LlamaMobileApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LlamaMobileApp.swift; sourceTree = "<group>"; };
@@ -45,7 +52,9 @@
 		3EBF859AB0DA07411CC7E7F9 /* ModelLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelLibrary.swift; sourceTree = "<group>"; };
 		462C8C24D07FE2CF67D87661 /* DeviceMemory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceMemory.swift; sourceTree = "<group>"; };
 		4F01A16695B8517B36688D97 /* LlamaMobileUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LlamaMobileUITests.swift; sourceTree = "<group>"; };
+		5724419CE28F73EA7E81BA70 /* SystemOne.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemOne.swift; sourceTree = "<group>"; };
 		5C1A9E2B7D4F3A6B8E0C1D27 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		634DC5AA7C3595EFE24A61EE /* DecisionClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DecisionClient.swift; sourceTree = "<group>"; };
 		864F71B12BBC630D7001DDEB /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		991408D92FB08B66921A0BFF /* Llama-iOS-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Llama-iOS-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B34F9A76F5210C56A2EEE4B /* DownloadSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DownloadSession.swift; sourceTree = "<group>"; };
@@ -55,8 +64,11 @@
 		AC0E11A0C0DE000000000031 /* FileInputPresenter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FileInputPresenter.swift; sourceTree = "<group>"; };
 		AC0E11A0C0DE000000000041 /* ChatView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		C0F619213077FC6C00DCDBEE /* Llama-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Llama-iOS.entitlements"; sourceTree = "<group>"; };
+		C6F2342DFF5F1E7A10A4F743 /* DecisionDraft.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DecisionDraft.swift; sourceTree = "<group>"; };
+		D72F94454FDE8219EE62D5B3 /* DecisionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DecisionView.swift; sourceTree = "<group>"; };
 		E1A4C2F07B3D5A9C6E8F0B12 /* LibraryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		E1A4C2F07B3D5A9C6E8F0B22 /* EngineController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EngineController.swift; sourceTree = "<group>"; };
+		F56A39BDC2E89130BE080B35 /* AnswerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AnswerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -154,8 +166,23 @@
 				3EBF859AB0DA07411CC7E7F9 /* ModelLibrary.swift */,
 				864F71B12BBC630D7001DDEB /* Info.plist */,
 				AC0E11A0C0DE000000000015 /* AppIcon.icon */,
+				71CA91A6BDC2B915A8E3107F /* Decisions */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		71CA91A6BDC2B915A8E3107F /* Decisions */ = {
+			isa = PBXGroup;
+			children = (
+				5724419CE28F73EA7E81BA70 /* SystemOne.swift */,
+				634DC5AA7C3595EFE24A61EE /* DecisionClient.swift */,
+				C6F2342DFF5F1E7A10A4F743 /* DecisionDraft.swift */,
+				D72F94454FDE8219EE62D5B3 /* DecisionView.swift */,
+				066A67AEADD13BE150005434 /* QuestionEditor.swift */,
+				F56A39BDC2E89130BE080B35 /* AnswerView.swift */,
+			);
+			name = Decisions;
+			path = Decisions;
 			sourceTree = "<group>";
 		};
 		9C3AD26D848EB2DBBE79EA24 /* UITests */ = {
@@ -362,6 +389,12 @@
 				AC0E11A0C0DE000000000014 /* SettingsView.swift in Sources */,
 				AC0E11A0C0DE000000000012 /* Keychain.swift in Sources */,
 				0F78A176B9AAF5C2F45B5C48 /* ModelLibrary.swift in Sources */,
+				CF738A91601F8F7CD15B55C2 /* SystemOne.swift in Sources */,
+				9BEB1BF41B0811D8F09D9A1C /* DecisionClient.swift in Sources */,
+				67D24379401910F2B77162DF /* DecisionDraft.swift in Sources */,
+				85D77E49E3348DA5015BF392 /* DecisionView.swift in Sources */,
+				2428BC4DFB42F2B0875E07DC /* QuestionEditor.swift in Sources */,
+				1469FA9F743780C01221640B /* AnswerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

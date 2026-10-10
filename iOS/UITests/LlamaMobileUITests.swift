@@ -160,6 +160,71 @@ final class LlamaMobileUITests: XCTestCase {
     XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200, String(decoding: data, as: UTF8.self))
   }
 
+  /// A decision model is listed as one, opens on its Try screen instead of the WebUI,
+  /// and answers the example request through `/v1/systemone`.
+  @MainActor
+  func testDecisionModelAnswersOnTryScreen() async throws {
+    let app = XCUIApplication()
+    app.launch()
+    let decision = (repo: "ggml-org/tinyopenjev-for-testing-gguf", quant: "Q8_0")
+    try await install(decision, in: app)
+    let id = "\(decision.repo):\(decision.quant)"
+
+    let entry = try await models()[id]
+    XCTAssertEqual(entry?["tags"] as? [String], ["decision"])
+    let architecture = entry?["architecture"] as? [String: Any]
+    XCTAssertEqual(architecture?["output_modalities"] as? [String], ["decisions"], "\(String(describing: entry))")
+
+    XCTAssertFalse(app.buttons["chat-\(id)"].exists, "Decision models can't chat")
+    let tryButton = app.buttons["try-\(id)"]
+    reveal(tryButton, in: app)
+    let enabled = NSPredicate(format: "isEnabled == true")
+    await fulfillment(of: [expectation(for: enabled, evaluatedWith: tryButton)], timeout: 120)
+    tryButton.tap()
+
+    // A model without a draft opens on the example: three questions, one per type.
+    let reset = app.buttons["decisionMore"]
+    XCTAssertTrue(reset.waitForExistence(timeout: 10), app.debugDescription)
+    reset.tap()
+    app.buttons["Reset to Example"].tap()
+    let run = app.buttons["runDecision"]
+    XCTAssertTrue(run.waitForExistence(timeout: 10), app.debugDescription)
+    run.tap()
+    // The answers open on a page of their own; the list only builds the rows on
+    // screen, so the later ones come into view with a swipe.
+    XCTAssertTrue(app.navigationBars["Answers"].waitForExistence(timeout: 120), app.debugDescription)
+    for key in ["route", "angry", "urgency"] {
+      let answer = app.descendants(matching: .any).matching(identifier: "answer-\(key)").firstMatch
+      if key == "route" {
+        XCTAssertTrue(answer.waitForExistence(timeout: 120), "No answer to \(key)\n\(app.debugDescription)")
+      }
+      for _ in 0..<5 where !answer.exists { app.swipeUp() }
+      XCTAssertTrue(answer.exists, "No answer to \(key)\n\(app.debugDescription)")
+    }
+    XCTAssertFalse(app.staticTexts["decisionError"].exists)
+    // The engine reports the compute time.
+    let compute = app.descendants(matching: .any).matching(identifier: "decisionCompute").firstMatch
+    for _ in 0..<3 where !compute.exists { app.swipeUp() }
+    XCTAssertTrue(compute.exists, app.debugDescription)
+    let attachment = XCTAttachment(screenshot: app.screenshot())
+    attachment.name = "Decision-answers"
+    attachment.lifetime = .keepAlways
+    add(attachment)
+
+    // The engine swapped the decision model in.
+    let statuses = try await modelStatuses()
+    XCTAssertEqual(statuses[id], "loaded", "\(statuses)")
+
+    // Back on the form, the last answers open again without a new run.
+    app.navigationBars["Answers"].buttons.firstMatch.tap()
+    let showAnswers = app.buttons["showAnswers"]
+    XCTAssertTrue(showAnswers.waitForExistence(timeout: 10), app.debugDescription)
+    showAnswers.tap()
+    XCTAssertTrue(app.navigationBars["Answers"].waitForExistence(timeout: 10), app.debugDescription)
+    app.navigationBars["Answers"].buttons.firstMatch.tap()
+    app.buttons["Close"].tap()
+  }
+
   /// The Hugging Face token is checked, saved and removed from Settings.
   @MainActor
   func testSettingsKeepTheHuggingFaceToken() {

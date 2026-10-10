@@ -11,6 +11,8 @@ struct LibraryView: View {
   @State private var chatting: ChatSource?
   /// A chat asked for while the last one is still closing, shown once it has.
   @State private var queuedChat: ChatSource?
+  /// The decision model whose Try screen is on screen.
+  @State private var trying: Model?
   @State private var showAddRepo = false
   @State private var showSettings = false
   /// Repo being resolved into a download.
@@ -49,6 +51,9 @@ struct LibraryView: View {
       .fullScreenCover(item: $chatting) { source in
         ChatScreen(chat: chat)
           .navigationTransition(.zoom(sourceID: source.id, in: transition))
+      }
+      .sheet(item: $trying) { model in
+        DecisionView(model: model, engine: engine, readsImages: library.readsImages(model))
       }
       .sheet(isPresented: $showSettings) {
         SettingsView(library: library)
@@ -331,11 +336,13 @@ struct LibraryView: View {
 
   // MARK: - Chat and deletion
 
-  /// Opens the WebUI on `model`, which it then loads. Nil while the engine can't load
-  /// it: not running, or no context fits (see `ModelLibrary.contextTier`).
+  /// Opens the WebUI on `model`, which it then loads, or the Try screen of a decision
+  /// model, which can't chat. Nil while the engine can't load it: not running, or no
+  /// context fits (see `ModelLibrary.contextTier`).
   private func openAction(for model: Model) -> (() -> Void)? {
     guard engine.state == .running, !engine.isUpdatingPresets,
       library.loadableModels.contains(model.id) else { return nil }
+    if model.kind == .decision { return { trying = model } }
     return { openChat(engine.chatURL(model: model.id), from: model.id) }
   }
 
@@ -489,7 +496,7 @@ private struct ModelCard: View {
   /// model runs at 4K anyway.
   let contexts: [ContextTier]
   let selectContext: @MainActor @Sendable (ContextTier) -> Void
-  /// Chat. Nil while the model can't be loaded.
+  /// Chat, or Try for a decision model. Nil while the model can't be loaded.
   let open: (() -> Void)?
   let delete: () -> Void
   let transition: Namespace.ID
@@ -545,8 +552,13 @@ private struct ModelCard: View {
         .tint(.red)
     }
     .contextMenu {
-      Button("Chat with Model", systemImage: "bubble.left") { open?() }
-        .disabled(open == nil)
+      if model.kind == .decision {
+        Button("Try Model", systemImage: "checklist") { open?() }
+          .disabled(open == nil)
+      } else {
+        Button("Chat with Model", systemImage: "bubble.left") { open?() }
+          .disabled(open == nil)
+      }
       Button("Delete", systemImage: "trash", role: .destructive, action: delete)
       if let url = URL(string: "https://huggingface.co/\(model.idBase)") {
         Link(destination: url) { Label("View on Hugging Face", systemImage: "arrow.up.right") }
@@ -554,26 +566,42 @@ private struct ModelCard: View {
     }
   }
 
-  /// The brand logo or the model's initial.
-  private func tile(_ parsed: ModelIdParser.Parsed) -> some View {
-    ModelTile(logoAsset: model.brandLogoAsset, name: parsed.name)
+  /// A checklist for a decision model, else the brand logo or the model's initial.
+  @ViewBuilder private func tile(_ parsed: ModelIdParser.Parsed) -> some View {
+    if model.kind == .decision {
+      ZStack {
+        RoundedRectangle(cornerRadius: 12).fill(Color.orange.opacity(0.18))
+        Image(systemName: "checklist").foregroundStyle(.orange)
+      }
+      .frame(width: 44, height: 44)
+      .accessibilityHidden(true)
+    } else {
+      ModelTile(logoAsset: model.brandLogoAsset, name: parsed.name)
+    }
   }
 
-  private var openButton: some View {
-    Button("Chat", systemImage: "bubble.left") { open?() }
-      .buttonStyle(.glassProminent)
-      .disabled(open == nil)
-      .matchedTransitionSource(id: model.id, in: transition)
-      .accessibilityIdentifier("chat-\(model.id)")
+  @ViewBuilder private var openButton: some View {
+    if model.kind == .decision {
+      Button("Try", systemImage: "checklist") { open?() }
+        .buttonStyle(.glass)
+        .disabled(open == nil)
+        .accessibilityIdentifier("try-\(model.id)")
+    } else {
+      Button("Chat", systemImage: "bubble.left") { open?() }
+        .buttonStyle(.glassProminent)
+        .disabled(open == nil)
+        .matchedTransitionSource(id: model.id, in: transition)
+        .accessibilityIdentifier("chat-\(model.id)")
+    }
   }
 
   private var hasChips: Bool {
-    loaded || readsImages
+    loaded || readsImages || model.kind == .decision
       || !model.capabilities.isDisjoint(with: [.audio, .reasoning, .tools])
   }
 
   /// What the model is and does, in words and symbols, not color alone: loaded,
-  /// inputs beyond text, reasoning, tools.
+  /// inputs beyond text, reasoning, tools, decision.
   private var chips: some View {
     let layout = typeSize.isAccessibilitySize
       ? AnyLayout(VStackLayout(alignment: .leading, spacing: 6))
@@ -594,6 +622,9 @@ private struct ModelCard: View {
       if model.capabilities.contains(.tools) {
         Chip("Tools", systemImage: "wrench.and.screwdriver")
       }
+      if model.kind == .decision {
+        Chip("Decision", systemImage: "checklist", tint: .orange)
+      }
     }
   }
 
@@ -608,7 +639,13 @@ private struct ModelCard: View {
       ? AnyLayout(VStackLayout(alignment: .leading, spacing: 10))
       : AnyLayout(HStackLayout(alignment: .center, spacing: 14))
     return columns {
-      contextPicker(tier)
+      // Models that don't chat run at a fixed context, the longest input they
+      // take (see `Model.effectiveCtxTier`), so there is nothing to pick.
+      if model.kind == .chat {
+        contextPicker(tier)
+      } else {
+        inputLimit(tier)
+      }
       VStack(alignment: .leading, spacing: 6) {
         // One line when it fits; the share goes under the footprint otherwise,
         // as with a long size on a narrow phone.
@@ -645,6 +682,13 @@ private struct ModelCard: View {
     Text("\(Text(fit.percent).fontWeight(.semibold).foregroundStyle(fit.tint)) of \(Self.size(mb: fit.budgetMb))")
       .foregroundStyle(.secondary)
       .monospacedDigit()
+  }
+
+  /// "Max input · 4K tokens", where a chat model has its context picker.
+  private func inputLimit(_ context: ContextTier) -> some View {
+    Text("\(Text("Max input").foregroundStyle(.secondary)) · \(context.shortLabel.uppercased()) tokens")
+      .font(.footnote.weight(.semibold))
+      .accessibilityIdentifier("input-limit-\(model.id)")
   }
 
   private func contextPicker(_ context: ContextTier) -> some View {
