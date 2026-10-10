@@ -50,6 +50,7 @@ xcodebuild -exportArchive -archivePath build/Llama-iOS.xcarchive -exportOptionsP
 | `App/EngineController.swift` | Runs the embedded server in the foreground, without a model until one is chosen, and mirrors its state. The only Swift code that calls the C API. |
 | `Engine/MobileServer.{h,cpp}` | The embedded server and its C API. |
 | `Engine/CMakeLists.txt` | Builds llama.cpp and the server as static libraries. |
+| `UITests/` | End-to-end tests: chat through the WebUI and model switching through the server API. |
 | `Signing.xcconfig` | Signing settings shared by the iOS targets. |
 | `../Packages/LlamaCore/` | Code shared with the macOS app: model ids, memory fit and context tiers for a given memory budget, Hugging Face resolution, cache scan and download plan, `llama://` links, the remote catalog. Linked but not used yet. Tests: `swift test` in that folder. |
 | `../scripts/build-ios-engine.sh` | Pins llama.cpp and builds `libLlamaMobile.a` for the current SDK. Xcode runs it before compiling. |
@@ -74,6 +75,13 @@ The iOS engine builds the same llama.cpp release the macOS app downloads (`Llama
 
 1. Set `TAG` and `COMMIT` in `scripts/build-ios-engine.sh`. The build warns when `TAG` differs from the macOS version.
 2. Compare the router JSON in `MobileServer.cpp` with `tools/server/server-models.cpp` at the new version, and check that `common/preset.h` and `common/fit.h` still offer what it calls.
+3. Run the UI tests.
+
+## Tests
+
+Run the `Llama-iOS` scheme's tests on a simulator or a device. They install two SmolLM2 models through `llama://install` links on first run, about 530 MB, a small vision model with its projector (280 MB), and download a third text model (270 MB) on every run to check stopping, resuming and finishing in the background.
+
+Simulators share the Mac's network, so the server port is shared too. Quit the app in any other simulator before running the tests.
 
 ## Known limitations
 
@@ -82,5 +90,6 @@ The iOS engine builds the same llama.cpp release the macOS app downloads (`Llama
 - The engine stops when the app goes to the background, which frees the model and ends a generation in progress; it starts again, without a model, when the app comes back.
 - Downloads use Wi-Fi only unless cellular data is allowed; that choice applies to downloads started afterwards.
 - A model above the memory estimate gets a warning, not a refusal, and runs at 4K.
+- Images and audio reach models whose projector supports them, through the WebUI's attachments. Recording from the microphone inside the WebUI is untested.
 - WebUI tools, MCP and the CORS proxy are disabled.
 - Decision models stay in the WebUI's picker, as on the Mac: the WebUI doesn't tell them apart yet, and chatting with one fails. `/models` reports their `decision` tag and `decisions` output modality.
