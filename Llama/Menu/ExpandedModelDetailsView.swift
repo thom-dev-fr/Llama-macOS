@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LlamaCore
 
 /// Context length section of a model page.
 /// Shows a full-width segmented picker where every segment pairs a tier label

@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LlamaCore
 
 /// Controls the status bar item and its AppKit menu.
 /// Breaks menu construction into section helpers so each concern stays focused.
@@ -85,8 +86,10 @@ final class MenuController: NSObject, NSMenuDelegate {
     guard !isLoadingDiscover else { return }
     isLoadingDiscover = true
     let systemMemoryMb = SystemMemory.memoryMb
+    let budgetMb = Model.deviceMemoryBudgetMb
     Task { [weak self] in
-      let suggestions = await Catalog.fetchFeatured(systemMemoryMb: systemMemoryMb)
+      let suggestions = await Catalog.fetchFeatured(
+        systemMemoryMb: systemMemoryMb, budgetMb: budgetMb)
       await MainActor.run {
         guard let self else { return }
         self.isLoadingDiscover = false

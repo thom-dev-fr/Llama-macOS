@@ -1,4 +1,5 @@
 import AppKit
+import LlamaCore
 
 /// Standalone row (in its own separator-delimited slot, below the Recommended
 /// section when that's present) linking to the web catalog for more models — the

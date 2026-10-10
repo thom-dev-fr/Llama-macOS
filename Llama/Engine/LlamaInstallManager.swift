@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 import os.log
 
 /// Owner of the app-managed CLI install. Holds the install `state` (changes are

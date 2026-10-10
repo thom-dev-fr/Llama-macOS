@@ -1,7 +1,8 @@
 import CryptoKit
 import Foundation
-import Sentry
+import LlamaCore
 import os.log
+import Sentry
 
 /// The transfer engine behind `ModelManager.downloadModel`: URLSession delegate
 /// callbacks that stream bytes into `.partial` files, finalization (hash
@@ -46,7 +47,7 @@ extension ModelManager {
 
     // Non-success statuses: fail the download with a user-facing message.
     if !(200...299).contains(status) {
-      let message = userMessage(forHTTPStatus: status)
+      let message = HFRequest.failureMessage(forHTTPStatus: status)
       // 401/403/404 are permanent — remove partials so a later retry doesn't replay a bad state.
       if [401, 403, 404].contains(status) {
         HFCache.removePartials(cacheDir: writer.cacheDir, modelId: modelId)
@@ -293,29 +294,6 @@ extension ModelManager {
   nonisolated private func handleDownloadFailure(model: Model, reason: String) {
     DispatchQueue.main.async { [weak self] in
       self?.failDownload(model: model, reason: reason)
-    }
-  }
-
-  /// Maps HTTP status codes to user-facing guidance. We deliberately don't claim a
-  /// specific cause (rate limit vs. gated repo vs. CDN outage) — Hugging Face uses
-  /// these codes for several reasons, so we hedge with "usually" and point the user
-  /// at the most common remedy.
-  nonisolated private func userMessage(forHTTPStatus status: Int) -> String {
-    switch status {
-    case 401:
-      return
-        "Hugging Face requires authentication for this download. Set a Hugging Face token in Settings and try again."
-    case 403, 429:
-      return
-        "Hugging Face refused the download (HTTP \(status)). This usually means a rate limit — try again in a few minutes, or set a Hugging Face token in Settings to lift the limit."
-    case 404:
-      return
-        "Hugging Face returned 404 for this file. The repo may have moved or been removed."
-    case 500...599:
-      return
-        "Hugging Face is temporarily unavailable (HTTP \(status)). Try again in a few minutes."
-    default:
-      return "Download failed with HTTP \(status)."
     }
   }
 

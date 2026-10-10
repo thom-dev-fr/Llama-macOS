@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 import os.log
 
 /// Resolves the `llama` executable the app drives, and classifies whether the

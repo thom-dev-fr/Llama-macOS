@@ -1,8 +1,9 @@
 import CryptoKit
 import Foundation
+import LlamaCore
 import Network
-import Sentry
 import os.log
+import Sentry
 
 /// Represents the current status of a model
 enum ModelStatus: Equatable {
@@ -195,7 +196,7 @@ class ModelManager: NSObject, URLSessionDataDelegate {
     // HF cache is the only download destination; if metadata fetch fails, we abort —
     // there's no legacy flat fallback anymore.
     Task {
-      let plan = await self.fetchHFDownloadPlan(for: model)
+      let plan = await HFDownloadPlan.fetch(for: model, token: UserSettings.hfToken)
       await MainActor.run {
         guard let plan else {
           self.failDownload(
@@ -220,11 +221,8 @@ class ModelManager: NSObject, URLSessionDataDelegate {
   /// won't reappear after a restart (re-clicking still resumes), so it's logged,
   /// not surfaced. The placeholder dies with the partial dir on completion/cancel.
   private func persistPlaceholder(for model: Model) {
-    let url = HFCache.placeholderURL(cacheDir: UserSettings.hfCacheDirectory, modelId: model.id)
     do {
-      try FileManager.default.createDirectory(
-        at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-      try JSONEncoder().encode(model).write(to: url, options: .atomic)
+      try model.writePlaceholder(cacheDir: UserSettings.hfCacheDirectory)
     } catch {
       logger.error(
         "Failed to write download placeholder for \(model.displayName): \(error.localizedDescription)"
@@ -349,28 +347,6 @@ class ModelManager: NSObject, URLSessionDataDelegate {
     )
   }
 
-  /// Fetches HF file metadata (commit hash, blob hashes) for a model via HEAD requests.
-  /// Each HEAD request returns both X-Repo-Commit and X-Linked-Etag, so one request
-  /// per file gives us everything we need. Returns nil on failure (caller aborts download).
-  private nonisolated func fetchHFDownloadPlan(for model: Model) async -> HFDownloadPlan? {
-    guard let repoDir = HFCache.repoDirName(from: model.downloadUrl) else { return nil }
-
-    let token = await MainActor.run { UserSettings.hfToken }
-
-    let allMetadata = await HFCache.fetchFileMetadata(
-      for: model.allDownloadUrls, token: token)
-    guard !allMetadata.isEmpty else { return nil }
-
-    // All files in a repo share the same commit hash — take the first one we get
-    let commit = allMetadata.values.compactMap(\.commitHash).first
-    guard let commit else { return nil }
-
-    // Collect blob hashes (some may be nil if header was missing)
-    let blobHashes = allMetadata.compactMapValues(\.blobHash)
-
-    return HFDownloadPlan(repoDir: repoDir, commit: commit, blobHashes: blobHashes)
-  }
-
   /// Gets the current status of a model.
   func status(for model: Model) -> ModelStatus {
     if downloadedModels.contains(where: { $0.id == model.id }) {
@@ -487,137 +463,22 @@ class ModelManager: NSObject, URLSessionDataDelegate {
   /// The app's own view of `models.ini`, derived purely from the cache scan and
   /// memory profiling -- before any user overrides are applied.
   private func generatedModelSections() -> [UserModelOverrides.Section] {
-    var sections: [UserModelOverrides.Section] = []
-
     // Enable larger batch size for better performance on high-memory devices (>=32 GB RAM)
     let useLargeBatch = Double(SystemMemory.memoryMb) / 1024.0 >= 32.0
 
-    for model in downloadedModels {
-      // Use the effective tier (user selection or max compatible)
-      guard let tier = model.effectiveCtxTier else { continue }
-
-      guard let paths = resolvedPaths[model.id] else { continue }
-      let modelPath = paths.modelFile
-      let mmprojPath = paths.mmprojFile
-
-      var section = UserModelOverrides.Section(name: model.id, pairs: [])
-      section.set("model", modelPath)
-      section.set("ctx-size", "\(tier.rawValue)")
-
-      if let mmprojPath {
-        section.set("mmproj", mmprojPath)
-      }
-
-      // Wire up speculative decoding -- a free speedup on models that ship a
-      // draft head (Qwen3.6/3.8 etc.). Two shapes: a separate sidecar
-      // (`dflash-….gguf` or `mtp-….gguf`, passed as the draft model), or an
-      // MTP head embedded in the main weights (reused via its own MTP context,
-      // no draft file). Sidecar wins when both look present. Each kind gets
-      // its own draft depth (`DraftHead.draftNMax`).
-      if let draftKind = paths.draftSidecarKind ?? (paths.usesMTP ? .mtp : nil) {
-        section.set("spec-type", draftKind.specType)
-        if let sidecar = paths.draftSidecarFile {
-          section.set("spec-draft-model", sidecar)
-        }
-        section.set("spec-draft-n-max", "\(draftKind.draftNMax)")
-      }
-
-      if useLargeBatch {
-        section.set("ubatch-size", "2048")
-      }
-
-      // What kind of model this is, for clients reading `/v1/models`: the
-      // OpenAI-style listing has no field for it, and its `architecture`
-      // modalities read text-in/text-out for every kind alike.
-      // llama-server passes `tags` through to each listing entry verbatim
-      // (it doesn't route on them), so a client can offer only `chat` models
-      // in a chat picker. Untagged models -- written by earlier app versions
-      // -- were all chat models, so clients can read a missing tag as `chat`.
-      section.set("tags", model.kind.rawValue)
-
-      // llama-server only serves `/v1/embeddings` for a model started with
-      // `--embeddings`. The flag also restricts the instance to embedding
-      // (it can't generate), which is all an embedding model does anyway.
-      if model.kind == .embedding {
-        section.set("embeddings", "true")
-      }
-
-      // Some models have to take each input in one batch (embedding models,
-      // and decision models like Laya and Clef -- see
-      // `ResolvedPaths.batchesWholeInput`), so the longest input they accept
-      // is the batch size, not the context ("input is too large to process.
-      // increase the physical batch size"). Left at the defaults that's 512
-      // tokens (2048 with the large ubatch above), well under the context.
-      // Sizing both batches to the context makes the context the real input
-      // limit. It costs memory, so these models stay at the default context
-      // (see `Model.effectiveCtxTier`). A `ctx-size` in models.user.ini is
-      // followed, so raising it there raises the input limit with it.
-      if paths.batchesWholeInput {
-        let ctx = UserModelOverrides.overriddenCtxSize(for: model.id) ?? "\(tier.rawValue)"
-        section.set("batch-size", ctx)
-        section.set("ubatch-size", ctx)
-      }
-
-      // Names the user pointed at this model in Settings > Aliases.
-      ModelAliases.apply(to: &section)
-
-      sections.append(section)
+    var sections = ModelPreset.sections(
+      for: downloadedModels, paths: resolvedPaths,
+      contextTier: { $0.effectiveCtxTier }, largeBatch: useLargeBatch,
+      ctxSizeOverride: { UserModelOverrides.overriddenCtxSize(for: $0.id) })
+    // Names the user pointed at each model in Settings > Aliases.
+    for index in sections.indices {
+      ModelAliases.apply(to: &sections[index])
     }
     return sections
   }
 
   /// Active mem-profile enrichment task. Cancelled on refresh to avoid stale updates.
   private var memProfileTask: Task<Void, Never>?
-
-  /// Everything one cache scan produces, ready to be applied to state.
-  private struct ScanResult {
-    var models: [Model]
-    var resolvedPaths: [String: ResolvedPaths]
-    var needsProfile: [(id: String, path: String)]
-    var paused: [(model: Model, bytesOnDisk: Int64)]
-  }
-
-  /// The scan itself: pure disk work, no state touched, so it can run on the
-  /// main actor at launch or off it for every later refresh.
-  nonisolated private static func scan(cacheDir hfCacheDir: URL) -> ScanResult {
-    let discovered = HFCache.scanForSideloaded(cacheDir: hfCacheDir)
-
-    // Apply cached mem-profile when available; queue the rest for async probing.
-    var resolvedPaths: [String: ResolvedPaths] = [:]
-    var models: [Model] = []
-    var needsProfile: [(id: String, path: String)] = []
-    for (entry, paths) in discovered {
-      var entry = entry
-      if let cached = MemProfileCache.get(modelId: entry.id) {
-        entry.ctxBytesPer1kTokens = cached.ctxBytesPer1kTokens
-        entry.residentBytes = cached.residentBytes
-      } else {
-        needsProfile.append((id: entry.id, path: paths.modelFile))
-      }
-      resolvedPaths[entry.id] = paths
-      models.append(entry)
-    }
-
-    // Garbage-collect partial dirs whose target is now installed.
-    let installedIds = Set(models.map(\.id))
-    HFCache.cleanInstalledPartials(cacheDir: hfCacheDir, installedIds: installedIds)
-
-    // Rehydrate paused rows for downloads interrupted in a previous session:
-    // decode each on-disk placeholder back into a `Model` and pair it with its
-    // current bytes-on-disk. No network resolve needed — the placeholder
-    // carries the full `Model`.
-    let pausedEntries = HFCache.scanPlaceholders(cacheDir: hfCacheDir).compactMap {
-      url -> (model: Model, bytesOnDisk: Int64)? in
-      guard let data = try? Data(contentsOf: url),
-        let model = try? JSONDecoder().decode(Model.self, from: data)
-      else { return nil }
-      return (model, HFCache.partialBytes(cacheDir: hfCacheDir, modelId: model.id))
-    }
-
-    return ScanResult(
-      models: models, resolvedPaths: resolvedPaths, needsProfile: needsProfile,
-      paused: pausedEntries)
-  }
 
   /// Scans the HF cache for installed models. Every model is treated as a
   /// sideloaded discovery — metadata comes from the repo dir + filename.
@@ -628,7 +489,7 @@ class ModelManager: NSObject, URLSessionDataDelegate {
 
     // Move directory reading to background queue to avoid blocking main thread
     Task.detached { [weak self] in
-      let result = Self.scan(cacheDir: hfCacheDir)
+      let result = CacheScan(cacheDir: hfCacheDir)
       guard let self else { return }
       await MainActor.run { self.apply(result) }
     }
@@ -652,7 +513,7 @@ class ModelManager: NSObject, URLSessionDataDelegate {
   /// the user actually has.
   func scanNow() {
     if applySimulatedModelsIfEnabled() { return }
-    apply(Self.scan(cacheDir: UserSettings.hfCacheDirectory))
+    apply(CacheScan(cacheDir: UserSettings.hfCacheDirectory))
   }
 
   /// DEBUG fixture: replaces the real cache scan with a large, realistic list so
@@ -673,7 +534,7 @@ class ModelManager: NSObject, URLSessionDataDelegate {
 
   /// Folds a finished scan into state: model list, paused rows, `models.ini`,
   /// and the async mem-profile probes for anything without a cached profile.
-  private func apply(_ result: ScanResult) {
+  private func apply(_ result: CacheScan) {
     downloadedModels = result.models.sorted(by: Model.displayOrder(_:_:))
     resolvedPaths = result.resolvedPaths
     // Drop paused entries that are now installed or actively downloading, then
@@ -913,32 +774,7 @@ class ModelManager: NSObject, URLSessionDataDelegate {
   /// Determines which files need downloading for the given model.
   private func filesRequired(for model: Model) -> [URL] {
     if resolvedPaths[model.id] != nil { return [] }
-
-    var files: [URL] = []
-    if !hfFileExists(model: model, url: model.downloadUrl) {
-      files.append(model.downloadUrl)
-    }
-    if let additional = model.additionalParts {
-      for url in additional where !hfFileExists(model: model, url: url) {
-        files.append(url)
-      }
-    }
-    if let mmprojUrl = model.mmprojUrl, !hfFileExists(model: model, url: mmprojUrl) {
-      files.append(mmprojUrl)
-    }
-    if let draftUrl = model.draftUrl, !hfFileExists(model: model, url: draftUrl) {
-      files.append(draftUrl)
-    }
-
-    return files
-  }
-
-  /// Checks if a file exists in the HF cache for a given model and remote URL.
-  private func hfFileExists(model: Model, url: URL) -> Bool {
-    guard let repoDir = model.hfRepoDir else { return false }
-    let filename = HFCache.repoRelativePath(from: url) ?? url.lastPathComponent
-    return HFCache.snapshotFileExists(
-      cacheDir: UserSettings.hfCacheDirectory, repoDir: repoDir, filename: filename)
+    return model.missingFiles(cacheDir: UserSettings.hfCacheDirectory)
   }
 
   private func validateCompatibility(for model: Model) throws {

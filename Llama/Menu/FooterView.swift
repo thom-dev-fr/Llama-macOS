@@ -1,4 +1,5 @@
 import AppKit
+import LlamaCore
 
 final class FooterView: ItemView {
   private let onCheckForUpdates: () -> Void

@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 
 /// Centralized access to simple persisted preferences.
 enum UserSettings {
@@ -504,8 +505,6 @@ enum UserSettings {
 
   /// Validates that a string looks like a Hugging Face access token.
   static func isValidHFToken(_ token: String) -> Bool {
-    return token.hasPrefix("hf_")
-      && token.count > 3
-      && token.dropFirst(3).allSatisfy { $0.isLetter || $0.isNumber }
+    HFRequest.isValidToken(token)
   }
 }

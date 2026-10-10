@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LlamaCore
 import os.log
 
 /// Consumes `llama://` URLs and turns them into `ModelManager` downloads.
@@ -51,7 +52,8 @@ final class DeeplinkHandler {
       resolved = try await HFRepoResolver.resolve(
         repo: repo,
         quant: quant,
-        token: UserSettings.hfToken
+        token: UserSettings.hfToken,
+        budgetMb: Model.deviceMemoryBudgetMb
       )
     } catch {
       logger.error(

@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import LlamaCore
 
 /// The model page's title line: the model name at page-title scale, bare and
 /// flush left, with a live status dot beside it.

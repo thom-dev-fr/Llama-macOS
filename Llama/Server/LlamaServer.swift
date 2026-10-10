@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 import os.log
 
 /// Essential errors that can occur during llama-server operations

@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 import OSLog
 
 /// User-owned additions to the generated `models.ini`.
@@ -36,39 +37,8 @@ enum UserModelOverrides {
     configDir.appendingPathComponent(filename)
   }
 
-  /// One `[section]` and its keys, in the order they were written.
-  ///
-  /// Order is preserved rather than using a dictionary so that a section the
-  /// app doesn't generate can be passed through looking like what the user
-  /// typed -- these files get hand-edited and diffed.
-  struct Section {
-    var name: String
-    var pairs: [(key: String, value: String)]
-
-    /// Sets `key`, replacing an existing entry in place or appending a new one.
-    /// In-place replacement keeps app-generated keys in their original position
-    /// when a user overrides one.
-    mutating func set(_ key: String, _ value: String) {
-      if let index = pairs.firstIndex(where: { $0.key == key }) {
-        pairs[index].value = value
-      } else {
-        pairs.append((key: key, value: value))
-      }
-    }
-
-    /// Removes `key` if present.
-    mutating func remove(_ key: String) {
-      pairs.removeAll { $0.key == key }
-    }
-
-    func serialized() -> String {
-      var out = "[\(name)]\n"
-      for pair in pairs {
-        out += "\(pair.key) = \(pair.value)\n"
-      }
-      return out + "\n"
-    }
-  }
+  /// One `[section]` of `models.ini`; shared with the iOS app through LlamaCore.
+  typealias Section = ModelPreset.Section
 
   /// Prepended to the generated `models.ini`.
   ///
@@ -233,69 +203,15 @@ enum UserModelOverrides {
     }
   }
 
-  /// Minimal INI parse: `[section]` headers and `key = value` lines.
-  ///
-  /// Comments (`;` or `#`) and blank lines are dropped rather than preserved --
-  /// the output is a generated file users aren't meant to edit, so carrying
-  /// their comments into it would invite editing the wrong file. Keys before
-  /// any section header are ignored: `models.ini` has no global section, so
-  /// they'd have nowhere to go.
   private static func parse(_ text: String) -> [Section] {
-    var sections: [Section] = []
-
-    for rawLine in text.components(separatedBy: .newlines) {
-      let line = rawLine.trimmingCharacters(in: .whitespaces)
-      if line.isEmpty || line.hasPrefix(";") || line.hasPrefix("#") { continue }
-
-      if line.hasPrefix("[") && line.hasSuffix("]") {
-        let name = String(line.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
-        if !name.isEmpty {
-          sections.append(Section(name: name, pairs: []))
-        }
-        continue
-      }
-
-      // `value` may itself contain `=` (e.g. `chat-template-kwargs`), so split
-      // on the first separator only.
-      guard let separator = line.firstIndex(of: "="), !sections.isEmpty else { continue }
-      let key = String(line[line.startIndex..<separator]).trimmingCharacters(in: .whitespaces)
-      let value = String(line[line.index(after: separator)...]).trimmingCharacters(in: .whitespaces)
-      if key.isEmpty { continue }
-
-      sections[sections.count - 1].set(key, value)
-    }
-
-    return sections
+    ModelPreset.parse(text)
   }
 
-  /// Applies user overrides to app-generated sections.
-  ///
-  /// Matching sections are merged per-key, so overriding `temp` doesn't require
-  /// restating the `model` and `mmproj` paths. Sections that match nothing the
-  /// app generated are appended verbatim -- that's what lets someone define a
-  /// model the scan can't produce, such as a draft model from another repo.
+  /// Applies user overrides to app-generated sections (see `ModelPreset.merge`).
   static func apply(to generated: [Section], overrides: [Section]) -> [Section] {
     // A suspended file is one the server already rejected; applying it again
     // would just reproduce the failure.
     guard !isSuspended else { return generated }
-
-    var merged = generated
-    var indexByName: [String: Int] = [:]
-    for (index, section) in merged.enumerated() {
-      indexByName[section.name] = index
-    }
-
-    for override in overrides {
-      if let index = indexByName[override.name] {
-        for pair in override.pairs {
-          merged[index].set(pair.key, pair.value)
-        }
-      } else {
-        indexByName[override.name] = merged.count
-        merged.append(override)
-      }
-    }
-
-    return merged
+    return ModelPreset.merge(generated, overrides: overrides)
   }
 }

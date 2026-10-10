@@ -1,5 +1,6 @@
 #if DEBUG
   import Foundation
+  import LlamaCore
 
   /// A DEBUG-only fixture that populates the "Installed" list with a large,
   /// realistic set of models — so the menu's long-list layout, scrolling,

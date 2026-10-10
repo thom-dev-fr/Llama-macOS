@@ -1,3 +1,4 @@
+import LlamaCore
 import SwiftUI
 
 /// The Aliases tab -- names API clients can send as `"model"`, each pointed

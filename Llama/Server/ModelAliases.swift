@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 import OSLog
 
 /// A stable name that API clients can send as `"model"` in place of a model

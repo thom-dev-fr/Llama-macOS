@@ -1,4 +1,5 @@
 import Foundation
+import LlamaCore
 import os.log
 
 /// One-time migration from the LlamaBarn identity to the Llama identity.

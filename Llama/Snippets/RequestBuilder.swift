@@ -1,4 +1,5 @@
 import AppKit
+import LlamaCore
 import os.log
 
 /// The API request builder: a page that composes a request against the local

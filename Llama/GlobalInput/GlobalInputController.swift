@@ -1,6 +1,7 @@
 import AppKit
-import SwiftUI
+import LlamaCore
 import os.log
+import SwiftUI
 
 /// Owns the global-input feature: the system-wide hotkey, the floating capture
 /// panel, and the dispatch of a captured prompt to the web UI.
