@@ -18,10 +18,22 @@
 		AC0E11A0C0DE000000000012 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000011 /* Keychain.swift */; };
 		AC0E11A0C0DE000000000014 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000013 /* SettingsView.swift */; };
 		AC0E11A0C0DE000000000016 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000015 /* AppIcon.icon */; };
+		AC0E11A0C0DE000000000032 /* FileInputPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000031 /* FileInputPresenter.swift */; };
 		AC0E11A0C0DE000000000042 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0E11A0C0DE000000000041 /* ChatView.swift */; };
+		C29470DD1AB709C9F2FF060B /* LlamaMobileUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F01A16695B8517B36688D97 /* LlamaMobileUITests.swift */; };
 		E1A4C2F07B3D5A9C6E8F0B11 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A4C2F07B3D5A9C6E8F0B12 /* LibraryView.swift */; };
 		E1A4C2F07B3D5A9C6E8F0B21 /* EngineController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A4C2F07B3D5A9C6E8F0B22 /* EngineController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1A29718829137906018277A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 156891942E2685F700F71BD4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 19E01F211BFEBF8D27557202;
+			remoteInfo = "Llama-iOS";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		03C34E99A6E89EB1DFAF9330 /* CMakeLists.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -32,13 +44,17 @@
 		243AA3DF5069EB9F3E0CB2CF /* Llama-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Llama-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EBF859AB0DA07411CC7E7F9 /* ModelLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ModelLibrary.swift; sourceTree = "<group>"; };
 		462C8C24D07FE2CF67D87661 /* DeviceMemory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceMemory.swift; sourceTree = "<group>"; };
+		4F01A16695B8517B36688D97 /* LlamaMobileUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LlamaMobileUITests.swift; sourceTree = "<group>"; };
 		5C1A9E2B7D4F3A6B8E0C1D27 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		864F71B12BBC630D7001DDEB /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		991408D92FB08B66921A0BFF /* Llama-iOS-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Llama-iOS-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B34F9A76F5210C56A2EEE4B /* DownloadSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DownloadSession.swift; sourceTree = "<group>"; };
 		AC0E11A0C0DE000000000011 /* Keychain.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		AC0E11A0C0DE000000000013 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AC0E11A0C0DE000000000015 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		AC0E11A0C0DE000000000031 /* FileInputPresenter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FileInputPresenter.swift; sourceTree = "<group>"; };
 		AC0E11A0C0DE000000000041 /* ChatView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		C0F619213077FC6C00DCDBEE /* Llama-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Llama-iOS.entitlements"; sourceTree = "<group>"; };
 		E1A4C2F07B3D5A9C6E8F0B12 /* LibraryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		E1A4C2F07B3D5A9C6E8F0B22 /* EngineController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EngineController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -75,6 +91,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A54D81BADD381B61C9E7547E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CBF4835AA7FF8620BCFF522C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -89,6 +112,7 @@
 		156891932E2685F700F71BD4 = {
 			isa = PBXGroup;
 			children = (
+				C0F619213077FC6C00DCDBEE /* Llama-iOS.entitlements */,
 				1568919E2E2685F700F71BD4 /* Llama */,
 				1568919D2E2685F700F71BD4 /* Products */,
 				A32ED089093C9B8AD08FA31D /* iOS */,
@@ -100,6 +124,7 @@
 			children = (
 				1568919C2E2685F700F71BD4 /* Llama.app */,
 				243AA3DF5069EB9F3E0CB2CF /* Llama-iOS.app */,
+				991408D92FB08B66921A0BFF /* Llama-iOS-UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -122,6 +147,7 @@
 				E1A4C2F07B3D5A9C6E8F0B22 /* EngineController.swift */,
 				E1A4C2F07B3D5A9C6E8F0B12 /* LibraryView.swift */,
 				462C8C24D07FE2CF67D87661 /* DeviceMemory.swift */,
+				AC0E11A0C0DE000000000031 /* FileInputPresenter.swift */,
 				AC0E11A0C0DE000000000041 /* ChatView.swift */,
 				AC0E11A0C0DE000000000013 /* SettingsView.swift */,
 				AC0E11A0C0DE000000000011 /* Keychain.swift */,
@@ -132,11 +158,20 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		9C3AD26D848EB2DBBE79EA24 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				4F01A16695B8517B36688D97 /* LlamaMobileUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
 		A32ED089093C9B8AD08FA31D /* iOS */ = {
 			isa = PBXGroup;
 			children = (
 				65092B1F93BF7B8742361427 /* App */,
 				4960631292C5E98677107355 /* Engine */,
+				9C3AD26D848EB2DBBE79EA24 /* UITests */,
 				5C1A9E2B7D4F3A6B8E0C1D27 /* Signing.xcconfig */,
 			);
 			path = iOS;
@@ -191,6 +226,24 @@
 			productReference = 243AA3DF5069EB9F3E0CB2CF /* Llama-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B15BC277997DA5BDCB481D31 /* Llama-iOS-UITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 82891E28A2C3DBBDF2F01E1F /* Build configuration list for PBXNativeTarget "Llama-iOS-UITests" */;
+			buildPhases = (
+				03D3A2AAE0EB11662B77D401 /* Sources */,
+				A54D81BADD381B61C9E7547E /* Frameworks */,
+				57F35C6D10263EE1D9476241 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				75E3927C05983793C14952B2 /* PBXTargetDependency */,
+			);
+			name = "Llama-iOS-UITests";
+			productName = "Llama-iOS-UITests";
+			productReference = 991408D92FB08B66921A0BFF /* Llama-iOS-UITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -227,6 +280,7 @@
 			targets = (
 				1568919B2E2685F700F71BD4 /* Llama */,
 				19E01F211BFEBF8D27557202 /* Llama-iOS */,
+				B15BC277997DA5BDCB481D31 /* Llama-iOS-UITests */,
 			);
 		};
 /* End PBXProject section */
@@ -244,6 +298,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC0E11A0C0DE000000000016 /* AppIcon.icon in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57F35C6D10263EE1D9476241 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +333,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		03D3A2AAE0EB11662B77D401 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C29470DD1AB709C9F2FF060B /* LlamaMobileUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		156891982E2685F700F71BD4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -288,6 +357,7 @@
 				E1A4C2F07B3D5A9C6E8F0B21 /* EngineController.swift in Sources */,
 				E1A4C2F07B3D5A9C6E8F0B11 /* LibraryView.swift in Sources */,
 				2849DAD780CD5CE2ED3AC6D2 /* DeviceMemory.swift in Sources */,
+				AC0E11A0C0DE000000000032 /* FileInputPresenter.swift in Sources */,
 				AC0E11A0C0DE000000000042 /* ChatView.swift in Sources */,
 				AC0E11A0C0DE000000000014 /* SettingsView.swift in Sources */,
 				AC0E11A0C0DE000000000012 /* Keychain.swift in Sources */,
@@ -296,6 +366,15 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		75E3927C05983793C14952B2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Llama-iOS";
+			target = 19E01F211BFEBF8D27557202 /* Llama-iOS */;
+			targetProxy = 1A29718829137906018277A8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		156891A62E2685F900F71BD4 /* Debug */ = {
@@ -484,6 +563,45 @@
 			};
 			name = Release;
 		};
+		2FB6866763BD101432F2D7DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C1A9E2B7D4F3A6B8E0C1D27 /* Signing.xcconfig */;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).ios.uitests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Llama-iOS";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A38A1AE9927702F65ED514DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C1A9E2B7D4F3A6B8E0C1D27 /* Signing.xcconfig */;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).ios.uitests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Llama-iOS";
+			};
+			name = Debug;
+		};
 		D311B9366FA58FFCAEFCD4F6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C1A9E2B7D4F3A6B8E0C1D27 /* Signing.xcconfig */;
@@ -491,12 +609,15 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = "Llama-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iOS/App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Llama;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo to attach to a message for a model that understands images.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio to attach to a message for a model that understands speech.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -541,12 +662,15 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = "Llama-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iOS/App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Llama;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo to attach to a message for a model that understands images.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio to attach to a message for a model that understands speech.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -609,6 +733,15 @@
 			buildConfigurations = (
 				D311B9366FA58FFCAEFCD4F6 /* Release */,
 				FE34CFF17CDB304B3F7E421A /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		82891E28A2C3DBBDF2F01E1F /* Build configuration list for PBXNativeTarget "Llama-iOS-UITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2FB6866763BD101432F2D7DE /* Release */,
+				A38A1AE9927702F65ED514DA /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

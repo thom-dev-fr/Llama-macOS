@@ -5,6 +5,7 @@ import WebKit
 /// reopens where it was and an answer still being written isn't cut off.
 @MainActor @Observable
 final class ChatController {
+  let files = FileInputPresenter()
   let page: WebPage
   /// The WebUI's conversation panel covers the page, with its own close button where
   /// the chat's sits. Only on a phone-width page: wider, the panel is a sidebar.
@@ -23,9 +24,11 @@ final class ChatController {
     configuration.websiteDataStore = .default()
     let scripts = configuration.userContentController
     scripts.addUserScript(WKUserScript(
+      source: Self.styleScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
+    scripts.addUserScript(WKUserScript(
       source: Self.navigationScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
     scripts.add(messages, name: NavigationMessages.name)
-    page = WebPage(configuration: configuration)
+    page = WebPage(configuration: configuration, dialogPresenter: files)
     page.isInspectable = true
     messages.received = { [weak self] covers in self?.navigationCovers = covers }
   }
@@ -56,6 +59,45 @@ final class ChatController {
     navigationCovers = false
     page.load(URLRequest(url: url))
   }
+
+  /// The least that makes the WebUI pass for native: the system background behind
+  /// the page and the system accent on its controls, both through the CSS variables
+  /// the WebUI defines on `:root` and `.dark` (the doubled selectors outrank its own,
+  /// whichever stylesheet loads last); no grey flash on tap; no text inflation on
+  /// rotation; no scroll indicators, on the page (WebKit reads `scrollbar-width` on
+  /// the root for the web view's own) or in the WebUI's scrolling panes; and no rubber band at the page's ends, which dragged the WebUI's
+  /// pinned header and input along. Nothing here touches layout or type: the WebUI is
+  /// sized in rem, so even a root font size reflows all of it.
+  ///
+  /// One exception: notifications drop in from the top, under the WebUI's header, as
+  /// the system's banners do, instead of covering the input at the bottom. Its
+  /// toaster (svelte-sonner) sets where toasts enter and stack from with `--lift`
+  /// and `--y`, keyed on its bottom position, so those turn over with it; the entry
+  /// offset applies only until a toast is mounted, when sonner's own rule takes over.
+  private static let styleScript = """
+    (() => {
+      const style = document.createElement('style');
+      style.textContent = `
+        :root:root { --background: #FFFFFF; --primary: #0062CC; --primary-foreground: #FFFFFF; --ring: #0062CC; }
+        :root.dark.dark { --background: #000000; --primary: #0A84FF; --primary-foreground: #FFFFFF; --ring: #0A84FF; }
+        html {
+          -webkit-tap-highlight-color: transparent;
+          -webkit-text-size-adjust: 100%;
+          overscroll-behavior: none;
+        }
+        * { scrollbar-width: none; }
+        ::-webkit-scrollbar { display: none; }
+        [data-sonner-toaster][data-y-position="bottom"][data-y-position] {
+          bottom: auto; top: calc(env(safe-area-inset-top) + 4.5rem);
+        }
+        [data-sonner-toast][data-y-position="bottom"][data-y-position] {
+          bottom: auto; top: 0; --lift: 1; --lift-amount: var(--gap);
+        }
+        [data-sonner-toast][data-y-position="bottom"]:not([data-mounted="true"]) { --y: translateY(-100%); }
+      `;
+      document.head.appendChild(style);
+    })();
+    """
 
   /// Reports whether the WebUI's conversation panel covers the page. Its Expand
   /// button exists only while the panel is closed; at the WebUI's `md` breakpoint
@@ -94,6 +136,7 @@ struct ChatScreen: View {
 
   var body: some View {
     WebView(chat.page)
+      .fileInputs(chat.files)
       // The page scrolls under the status bar; the system background keeps it legible.
       .overlay(alignment: .top) {
         Color.clear
